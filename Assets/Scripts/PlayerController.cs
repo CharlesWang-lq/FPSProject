@@ -1,4 +1,3 @@
-// using NUnit.Framework.Internal;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -9,55 +8,55 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed; // Movement speed
-    public float rotateSpeed; // Rotation angle
-    private float angleY; // Horizontal view angle, rotates around Y-axis
-    private float angleX; // Vertical view angle, rotates around X-axis
-    public Animator animator; // Animation controller
-    public Rigidbody rigid; // Rigidbody
+    public float rotateSpeed; // Rotation speed
+    private float angleY; // Horizontal view angle, rotation around Y-axis
+    private float angleX; // Vertical view angle, rotation around X-axis
+    public Animator animator; // Animator controller
+    public Rigidbody rigid; // Rigidbody component
     public float jumpForce; // Jump force
     public Transform gunPointTrans; // Gun muzzle position
     public GameObject bloodEffectGo; // Blood effect prefab
-    public GameObject grassEffectGo; // Ground hit effect prefab
+    public GameObject grassEffectGo; // Shooting ground effect prefab
     public GameObject pinkFlowerEffectGo; // Pink flower effect
-    public GameObject woodEffectGo; // Tree trunk effect
+    public GameObject woodEffectGo; // Wood effect
     public GameObject riverEffectGo; // Water effect
     public GameObject otherEffectGo; // Other effects
 
     public float attackCD; // Attack cooldown
-    public float attackTimer; // Tracks last attack time
-    public Transform attackEffectTrans; // Position for spawning attack effects
+    public float attackTimer; // Record the last attack time
+    public Transform attackEffectTrans; // Attack effect spawn position
     public GameObject singleAttackEffectGo; // Single-shot gun attack effect
 
     public GUNTYPE gunType; // Current gun type
-    public GameObject autoAttackEffectGo; // Automatic gun attack effect
+    public GameObject autoAttackEffectGo; // Machine gun attack effect
     public GameObject snipingAttackEffectGo; // Sniper gun attack effect
-    // Total bullets in inventory
+    // Bullet count in the backpack
     private Dictionary<GUNTYPE, int> bulletsBag = new Dictionary<GUNTYPE, int>();
-    // Bullets in the clip
+    // Bullet count in the clip
     private Dictionary<GUNTYPE, int> bulletsClip = new Dictionary<GUNTYPE, int>();
 
     public int maxSingleShotBullets;
     public int maxAutoShotBullets;
     public int maxSnipingShotBullets;
 
-    public bool isReloading; // Reloading status
+    public bool isReloading; // Reloading bullets
 
     public GameObject[] gunGo;
 
-    public GameObject scope; // Scope object
+    public GameObject scope; // Scope
 
-    public int HP; // Player's health points
+    public int HP;
 
-    // Bullet power for each weapon type
+    // Bullet power for each weapon
     private Dictionary<GUNTYPE, int> gunWeaponDamage = new Dictionary<GUNTYPE, int>();
-
+    
     public AudioSource audioSource;
-    public AudioClip singleShootAudio; // Single-shot sound effect
-    public AudioClip autoShootAudio; // Automatic gun sound effect
-    public AudioClip snipingShootAudio; // Sniper gun sound effect
-    public AudioClip reloadAudio; // Reload sound effect
-    public AudioClip hitGroundAudio; // Ground hit sound effect
-    public AudioClip jumpAudio; // Jump sound effect
+    public AudioClip singleShootAudio;
+    public AudioClip autoShootAudio;
+    public AudioClip snipingShootAudio;
+    public AudioClip reloadAudio;
+    public AudioClip hitGroundAudio;
+    public AudioClip jumpAudio;
     public AudioSource moveAudioSource;
 
     public Text playerHPText;
@@ -72,12 +71,11 @@ public class PlayerController : MonoBehaviour
 
     public GameObject gameOverPanel;
 
-
     void Start()
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        bulletsBag.Add(GUNTYPE.SINGLESHOT,30);
+        bulletsBag.Add(GUNTYPE.SINGLESHOT, 30);
         bulletsBag.Add(GUNTYPE.AUTO, 50);
         bulletsBag.Add(GUNTYPE.SNIPING, 5);
         bulletsClip.Add(GUNTYPE.SINGLESHOT, maxSingleShotBullets);
@@ -102,21 +100,19 @@ public class PlayerController : MonoBehaviour
         OpenOrCloseScope();
     }
     /// <summary>
-    /// Player Movement
+    /// Player movement
     /// </summary>
     private void PlayerMove()
     {
-        // Vertical axis input
+        // Player vertical input
         float verticalInput = Input.GetAxis("Vertical");
-        // Horizontal axis input
+        // Player horizontal input
         float horizontalInput = Input.GetAxis("Horizontal");
-        // Vertical displacement
-        Vector3 movementV = transform.forward * verticalInput * moveSpeed
-                            * Time.deltaTime;
-        // Horizontal displacement
-        Vector3 movementH = transform.right * horizontalInput * moveSpeed
-                            * Time.deltaTime;
-        // Add displacement to position
+        // Player vertical displacement
+        Vector3 movementV = transform.forward * verticalInput * moveSpeed * Time.deltaTime;
+        // Player horizontal displacement
+        Vector3 movementH = transform.right * horizontalInput * moveSpeed * Time.deltaTime;
+        // Add displacement to the position every second
         transform.position += movementV + movementH;
         animator.SetFloat("MoveX", horizontalInput);
         animator.SetFloat("MoveY", verticalInput);
@@ -140,25 +136,24 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void LookAround()
     {
-        // Horizontal view
-        // Mouse horizontal axis input
+        // Horizontal look
+        // Mouse horizontal input
         float mouseX = Input.GetAxis("Mouse X");
-        // Adjust horizontal view angle (player input value)
+        // Horizontal view, change the Y value (player input value)
         float lookHAngleY = mouseX * rotateSpeed;
         angleY = angleY + lookHAngleY;
 
-        // Vertical view
-        // Mouse vertical axis input (player input value)
+        // Vertical look
+        // Mouse vertical input (player input value)
         float mouseY = -Input.GetAxis("Mouse Y");
-        // Adjust vertical view angle
+        // Vertical view, change the X value
         float lookVAngleX = mouseY * rotateSpeed;
         angleX = Mathf.Clamp(angleX + lookVAngleX, -60, 60);
 
-        transform.eulerAngles = new Vector3(
-            angleX, angleY, transform.eulerAngles.z);
+        transform.eulerAngles = new Vector3(angleX, angleY, transform.eulerAngles.z);
     }
     /// <summary>
-    /// Attack functionality
+    /// Attack
     /// </summary>
     private void Attack()
     {
@@ -181,7 +176,7 @@ public class PlayerController : MonoBehaviour
         }
     }
     /// <summary>
-    /// Jump functionality
+    /// Jump
     /// </summary>
     private void Jump()
     {
@@ -192,7 +187,7 @@ public class PlayerController : MonoBehaviour
         }
     }
     /// <summary>
-    /// Switch weapons
+    /// Change weapon
     /// </summary>
     private void ChangeGun()
     {
@@ -223,7 +218,7 @@ public class PlayerController : MonoBehaviour
         }
     }
     /// <summary>
-    /// Display corresponding game object
+    /// Show corresponding game object
     /// </summary>
     private void ChangeGunGameObject(int gunLevel)
     {
@@ -237,15 +232,15 @@ public class PlayerController : MonoBehaviour
         bulletText.text = "X" + bulletsClip[gunType].ToString();
     }
 
-     /// <summary>
+    /// <summary>
     /// Single-shot gun attack
     /// </summary>
     private void SingleShotAttack()
     {
         if (Input.GetMouseButtonDown(0) && Time.time - attackTimer >= attackCD)
         {
-            // Get the number of bullets in the clip for the currently used gun
-            if (bulletsClip[gunType] > 0) // If the clip still has bullets, the player can attack
+            // Get the bullet count in the current gun clip
+            if (bulletsClip[gunType] > 0) // The clip still has bullets, can attack
             {
                 PlaySound(singleShootAudio);
                 bulletsClip[gunType]--;
@@ -256,22 +251,21 @@ public class PlayerController : MonoBehaviour
                 go.transform.localEulerAngles = Vector3.zero;
                 Invoke("GunAttack", 0.1f);
             }
-            else // If the clip is empty, bullets need to be reloaded from the inventory
+            else // The clip is empty, need to reload from the backpack
             {
                 Reload();
             }
         }
     }
-
     /// <summary>
-    /// Automatic gun attack
+    /// Machine gun attack
     /// </summary>
     private void AutoAttack()
     {
         if (Input.GetMouseButton(0) && Time.time - attackTimer >= attackCD)
         {
-            // Get the number of bullets in the clip for the currently used gun
-            if (bulletsClip[gunType] > 0) // If the clip still has bullets, the player can attack
+            // Get the bullet count in the current gun clip
+            if (bulletsClip[gunType] > 0) // The clip still has bullets, can attack
             {
                 PlaySound(autoShootAudio);
                 bulletsClip[gunType]--;
@@ -282,7 +276,7 @@ public class PlayerController : MonoBehaviour
                 go.transform.localEulerAngles = Vector3.zero;
                 GunAttack();
             }
-            else // If the clip is empty, bullets need to be reloaded from the inventory
+            else // The clip is empty, need to reload from the backpack
             {
                 Reload();
             }
@@ -292,7 +286,6 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("AutoAttack", false);
         }
     }
-
     /// <summary>
     /// Sniper gun attack
     /// </summary>
@@ -300,8 +293,8 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && Time.time - attackTimer >= attackCD)
         {
-            // Get the number of bullets in the clip for the currently used gun
-            if (bulletsClip[gunType] > 0) // If the clip still has bullets, the player can attack
+            // Get the bullet count in the current gun clip
+            if (bulletsClip[gunType] > 0) // The clip still has bullets, can attack
             {
                 PlaySound(snipingShootAudio);
                 bulletsClip[gunType]--;
@@ -312,15 +305,14 @@ public class PlayerController : MonoBehaviour
                 go.transform.localEulerAngles = Vector3.zero;
                 Invoke("GunAttack", 0.25f);
             }
-            else // If the clip is empty, bullets need to be reloaded from the inventory
+            else // The clip is empty, need to reload from the backpack
             {
                 Reload();
             }
         }
     }
-
     /// <summary>
-    /// Core shooting functionality
+    /// Specific shooting functionality
     /// </summary>
     private void GunAttack()
     {
@@ -328,7 +320,7 @@ public class PlayerController : MonoBehaviour
         attackTimer = Time.time;
         if (Physics.Raycast(gunPointTrans.position, gunPointTrans.forward, out hit, 5))
         {
-            // Generate effects based on what the bullet hits
+            // Spawn effect
             switch (hit.collider.tag)
             {
                 case "Enemy":
@@ -364,13 +356,12 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
     /// <summary>
     /// Reload bullets
     /// </summary>
     private void Reload()
     {
-        bool canReload = false; // Determines if bullets can be reloaded
+        bool canReload = false; // Whether it can be reloaded
         switch (gunType)
         {
             case GUNTYPE.SINGLESHOT:
@@ -394,10 +385,10 @@ public class PlayerController : MonoBehaviour
             default:
                 break;
         }
-        if (canReload) // If the clip isn't full, reload it
+        if (canReload) // The clip is not full and can be reloaded
         {
             PlaySound(reloadAudio);
-            if (bulletsBag[gunType] > 0) // If the inventory still has bullets
+            if (bulletsBag[gunType] > 0) // The backpack still has bullets
             {
                 isReloading = true;
                 Invoke("RecoverAttackState", 2.667f);
@@ -405,18 +396,42 @@ public class PlayerController : MonoBehaviour
                 switch (gunType)
                 {
                     case GUNTYPE.SINGLESHOT:
-                        if (bulletsBag[gunType] >= maxSingleShotBullets)
+                        if (bulletsBag[gunType] >= maxSingleShotBullets) // The remaining bullets in the backpack are enough to fill the clip
                         {
-                            if (bulletsClip[gunType] > 0) // If the clip has some remaining bullets, fill it up
+                            if (bulletsClip[gunType] > 0) // If there are remaining bullets in the clip, fill it up
                             {
+                                // Supplement quantity
                                 int bulletNum = maxSingleShotBullets - bulletsClip[gunType];
                                 bulletsBag[gunType] -= bulletNum;
                                 bulletsClip[gunType] += bulletNum;
                             }
-                            else // If the clip is empty, fill it to max capacity
+                            else // No remaining bullets, load the maximum quantity
                             {
                                 bulletsBag[gunType] -= maxSingleShotBullets;
                                 bulletsClip[gunType] += maxSingleShotBullets;
+                            }
+                        }
+                        else
+                        {
+                            // Not enough to fill completely, put all remaining into the clip
+                            bulletsClip[gunType] += bulletsBag[gunType];
+                            bulletsBag[gunType] = 0;
+                        }
+                        break;
+                    case GUNTYPE.AUTO:
+                        if (bulletsBag[gunType] >= maxAutoShotBullets)
+                        {
+                            if (bulletsClip[gunType] > 0) // If there are remaining bullets in the clip, fill it up
+                            {
+                                // Supplement quantity
+                                int bulletNum = maxAutoShotBullets - bulletsClip[gunType];
+                                bulletsBag[gunType] -= bulletNum;
+                                bulletsClip[gunType] += bulletNum;
+                            }
+                            else // No remaining bullets, load the maximum quantity
+                            {
+                                bulletsBag[gunType] -= maxAutoShotBullets;
+                                bulletsClip[gunType] += maxAutoShotBullets;
                             }
                         }
                         else
@@ -425,11 +440,27 @@ public class PlayerController : MonoBehaviour
                             bulletsBag[gunType] = 0;
                         }
                         break;
-                    case GUNTYPE.AUTO:
-                        // Similar logic for automatic guns
-                        break;
                     case GUNTYPE.SNIPING:
-                        // Similar logic for sniper guns
+                        if (bulletsBag[gunType] >= maxSnipingShotBullets)
+                        {
+                            if (bulletsClip[gunType] > 0) // If there are remaining bullets in the clip, fill it up
+                            {
+                                // Supplement quantity
+                                int bulletNum = maxSnipingShotBullets - bulletsClip[gunType];
+                                bulletsBag[gunType] -= bulletNum;
+                                bulletsClip[gunType] += bulletNum;
+                            }
+                            else // No remaining bullets, load the maximum quantity
+                            {
+                                bulletsBag[gunType] -= maxSnipingShotBullets;
+                                bulletsClip[gunType] += maxSnipingShotBullets;
+                            }
+                        }
+                        else
+                        {
+                            bulletsClip[gunType] += bulletsBag[gunType];
+                            bulletsBag[gunType] = 0;
+                        }
                         break;
                     default:
                         break;
@@ -439,17 +470,15 @@ public class PlayerController : MonoBehaviour
         }
         animator.SetBool("AutoAttack", false);
     }
-
     /// <summary>
-    /// Finished reloading, ready to attack
+    /// Reload complete, can attack
     /// </summary>
     private void RecoverAttackState()
     {
         isReloading = false;
     }
-
     /// <summary>
-    /// Toggle the scope
+    /// Open or close scope
     /// </summary>
     private void OpenOrCloseScope()
     {
@@ -464,7 +493,6 @@ public class PlayerController : MonoBehaviour
             scopeUIGo.SetActive(false);
         }
     }
-
     /// <summary>
     /// Take damage
     /// </summary>
@@ -483,7 +511,6 @@ public class PlayerController : MonoBehaviour
         }
         playerHPText.text = HP.ToString();
     }
-
     /// <summary>
     /// Play audio
     /// </summary>
@@ -491,7 +518,6 @@ public class PlayerController : MonoBehaviour
     {
         audioSource.PlayOneShot(ac);
     }
-
     private void HideBloodUIGo()
     {
         bloodUIGo.SetActive(false);

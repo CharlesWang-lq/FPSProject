@@ -8,15 +8,18 @@ public class StartUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        // Any initialization logic if needed
     }
+
     public void StartGame()
     {
-        SceneManager.LoadScene("FPS"); // Replace "FPSGameScene" with the name of your game scene
+        // Load the FPS scene, then set it as the active scene
+        SceneManager.LoadScene("FPS", LoadSceneMode.Single);
     }
+
     // Update is called once per frame
     void Update()
     {
-        
+        // Empty update can be removed if not used
     }
 }
