@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class IngameManagement : MonoBehaviour
+public class IngameManagement : MonoBehaviour //ai help generator some of the code
 {
     private bool isPaused = false;
     public GameObject pauseMenuUI;
@@ -55,7 +55,11 @@ public class IngameManagement : MonoBehaviour
     public void QuitGame()
     {
         Time.timeScale = 1f; // Ensure game time is running before quitting
-        SceneManager.LoadScene("Start"); // Load the Main Menu scene
+        #if UNITY_EDITOR
+        SceneManager.LoadScene("Start"); // Load the Main Menu scene in the editor
+        #else
+        Application.Quit(); // Quit the application in a built version
+        #endif
     }
 
     private void DisablePlayerActions()

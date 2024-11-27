@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour //ai help generator some of the code
 {
     public float moveSpeed; // Movement speed
     public float rotateSpeed; // Rotation angle
