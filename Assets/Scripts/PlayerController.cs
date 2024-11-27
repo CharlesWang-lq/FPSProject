@@ -6,10 +6,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-
-
-
-
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed; // Movement speed

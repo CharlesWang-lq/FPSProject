@@ -1,11 +1,8 @@
+// Enemy.cs
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-
-
-
-
 
 public class Enemy : MonoBehaviour
 {
@@ -21,6 +18,7 @@ public class Enemy : MonoBehaviour
     private bool isDead; // Tracks if the enemy is dead
     public AudioClip dieAudio; // Death sound effect
     private bool hasTarget; // Tracks if the enemy has a target
+    private bool isPaused; // Tracks if the game is paused
 
     void Start()
     {
@@ -29,7 +27,7 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
-        if (isDead)
+        if (isDead || isPaused)
         {
             return;
         }
@@ -104,7 +102,32 @@ public class Enemy : MonoBehaviour
     /// </summary>
     private void DelayPlayAttackSound()
     {
-        pc.TakeDamage(attackValue); // Deal damage to the player
-        audioSource.PlayOneShot(attackAudio); // Play attack sound effect
+        if (!isPaused)
+        {
+            pc.TakeDamage(attackValue); // Deal damage to the player
+            audioSource.PlayOneShot(attackAudio); // Play attack sound effect
+        }
+    }
+
+    /// <summary>
+    /// Pause enemy actions
+    /// </summary>
+    public void PauseEnemy()
+    {
+        isPaused = true;
+        agent.isStopped = true;
+        animator.SetFloat("MoveState", 0); // Stop movement animation
+    }
+
+    /// <summary>
+    /// Resume enemy actions
+    /// </summary>
+    public void ResumeEnemy()
+    {
+        isPaused = false;
+        if (hasTarget)
+        {
+            agent.isStopped = false;
+        }
     }
 }
