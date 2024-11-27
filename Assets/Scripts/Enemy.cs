@@ -2,21 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-
+//*****************************************
+//功能说明：
+//***************************************** 
 public class Enemy : MonoBehaviour
 {
     public Animator animator;
-    public int HP; // Enemy health
-    public PlayerController pc; // Reference to the player controller
-    public NavMeshAgent agent; // Navigation agent
-    public float attackCD; // Attack cooldown
-    private float attackTimer; // Timer to track last attack
-    public int attackValue; // Damage dealt by enemy
-    public AudioSource audioSource; // Audio source for sound effects
-    public AudioClip attackAudio; // Attack sound effect
-    private bool isDead; // Is the enemy dead
-    public AudioClip dieAudio; // Death sound effect
-    private bool hasTarget; // Does the enemy have a target
+    public int HP;
+    public PlayerController pc;
+    public NavMeshAgent agent;
+    public float attackCD;
+    private float attackTimer;
+    public int attackValue;
+    public AudioSource audioSource;
+    public AudioClip attackAudio;
+    private bool isDead;
+    public AudioClip dieAudio;
+    private bool hasTarget;
 
     void Start()
     {
@@ -29,21 +31,21 @@ public class Enemy : MonoBehaviour
         {
             return;
         }
-        if (Vector3.Distance(transform.position, pc.transform.position) >= 5)
+        if (Vector3.Distance(transform.position, pc.transform.position) >=5)
         {
-            // If farther than 5 meters, the enemy does nothing
+            //5米外，敌人不做任何事情
             return;
         }
         else
         {
-            // Within 5 meters, the enemy sees the player and gains a target
+            //5米内看到玩家，获得目标
             hasTarget = true;
         }
-        if (hasTarget) // When the enemy has a target
+        if (hasTarget)//有目标后
         {
             if (Vector3.Distance(transform.position, pc.transform.position) <= 1)
             {
-                // Attack the player
+                //攻击
                 Attack();
             }
             else
@@ -57,16 +59,17 @@ public class Enemy : MonoBehaviour
                 animator.SetFloat("MoveState", 1);
             }
         }
+       
     }
 
     /// <summary>
-    /// Enemy takes damage
+    /// 受到攻击
     /// </summary>
     public void TakeDamage(int attackValue)
     {
         animator.SetTrigger("Hit");
         HP -= attackValue;
-        if (HP <= 0)
+        if (HP<=0)
         {
             animator.SetBool("Die", true);
             agent.isStopped = true;
@@ -76,7 +79,7 @@ public class Enemy : MonoBehaviour
         }
     }
     /// <summary>
-    /// Enemy attacks the player
+    /// 敌人攻击
     /// </summary>
     private void Attack()
     {
@@ -90,11 +93,11 @@ public class Enemy : MonoBehaviour
             {
                 audioSource.Stop();
             }
-            Invoke("DelayPlayAttackSound", 1);
+            Invoke("DelayPlayAttackSound",1);
         }
     }
     /// <summary>
-    /// Play attack sound effect after a delay
+    /// 延时播放攻击音效
     /// </summary>
     private void DelayPlayAttackSound()
     {

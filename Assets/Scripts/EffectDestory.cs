@@ -1,14 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class EffectDestroy : MonoBehaviour
+//*****************************************
+//功能说明：特效销毁
+//***************************************** 
+public class EffectDestory : MonoBehaviour
 {
-    public float destroyTime; // Time to destroy the effect
+    public float destoryTime;//销毁时间
 
     void Start()
     {
-        Destroy(gameObject, destroyTime); // Destroy the game object after a specified time
+        Destroy(gameObject, destoryTime);
     }
 
     void Update()
