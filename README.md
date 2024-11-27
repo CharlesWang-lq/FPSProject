@@ -4,7 +4,7 @@ Group member moxuzhu(mzhu296@uwo.ca) linqiwang(lwan256@uwo.ca)
 
 Last Stand: Exo Survival
 
-This is a FPS shoot zombies game
+This is a FPS shoot zombies game, You are the hero with the weapon, mission is to shoot down all the zombie
 
 Main menu, Pause Menu, Restart✅
 
