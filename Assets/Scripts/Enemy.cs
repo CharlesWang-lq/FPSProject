@@ -2,23 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-//*****************************************
-//功能说明：
-//***************************************** 
+
+
+
+
+
 public class Enemy : MonoBehaviour
 {
     public Animator animator;
-    public int HP;
-    public PlayerController pc;
-    public NavMeshAgent agent;
-    public float attackCD;
-    private float attackTimer;
-    public int attackValue;
-    public AudioSource audioSource;
-    public AudioClip attackAudio;
-    private bool isDead;
-    public AudioClip dieAudio;
-    private bool hasTarget;
+    public int HP; // Enemy health points
+    public PlayerController pc; // Reference to the player controller
+    public NavMeshAgent agent; // NavMeshAgent for pathfinding
+    public float attackCD; // Attack cooldown time
+    private float attackTimer; // Tracks last attack time
+    public int attackValue; // Attack damage value
+    public AudioSource audioSource; // Audio source for sound effects
+    public AudioClip attackAudio; // Attack sound effect
+    private bool isDead; // Tracks if the enemy is dead
+    public AudioClip dieAudio; // Death sound effect
+    private bool hasTarget; // Tracks if the enemy has a target
 
     void Start()
     {
@@ -31,21 +33,21 @@ public class Enemy : MonoBehaviour
         {
             return;
         }
-        if (Vector3.Distance(transform.position, pc.transform.position) >=5)
+        if (Vector3.Distance(transform.position, pc.transform.position) >= 5)
         {
-            //5米外，敌人不做任何事情
+            // If the player is more than 5 meters away, the enemy does nothing
             return;
         }
         else
         {
-            //5米内看到玩家，获得目标
+            // If the player is within 5 meters, the enemy identifies the player as a target
             hasTarget = true;
         }
-        if (hasTarget)//有目标后
+        if (hasTarget) // Once a target is acquired
         {
             if (Vector3.Distance(transform.position, pc.transform.position) <= 1)
             {
-                //攻击
+                // Attack if the player is within 1 meter
                 Attack();
             }
             else
@@ -56,52 +58,53 @@ public class Enemy : MonoBehaviour
                 }
                 agent.isStopped = false;
                 agent.SetDestination(pc.transform.position);
-                animator.SetFloat("MoveState", 1);
+                animator.SetFloat("MoveState", 1); // Set animation to moving state
             }
         }
-       
     }
 
     /// <summary>
-    /// 受到攻击
+    /// Take damage from the player
     /// </summary>
     public void TakeDamage(int attackValue)
     {
-        animator.SetTrigger("Hit");
-        HP -= attackValue;
-        if (HP<=0)
+        animator.SetTrigger("Hit"); // Trigger hit animation
+        HP -= attackValue; // Reduce health points
+        if (HP <= 0)
         {
-            animator.SetBool("Die", true);
-            agent.isStopped = true;
-            isDead = true;
+            animator.SetBool("Die", true); // Trigger death animation
+            agent.isStopped = true; // Stop the enemy's movement
+            isDead = true; // Mark the enemy as dead
             audioSource.Stop();
-            audioSource.PlayOneShot(dieAudio);
+            audioSource.PlayOneShot(dieAudio); // Play death sound effect
         }
     }
+
     /// <summary>
-    /// 敌人攻击
+    /// Enemy attack functionality
     /// </summary>
     private void Attack()
     {
-        agent.isStopped = true;
-        animator.SetFloat("MoveState", 0);
+        agent.isStopped = true; // Stop moving while attacking
+        animator.SetFloat("MoveState", 0); // Stop movement animation
         if (Time.time - attackTimer >= attackCD)
         {
-            animator.SetTrigger("Attack");
-            attackTimer = Time.time;
+            animator.SetTrigger("Attack"); // Trigger attack animation
+            attackTimer = Time.time; // Update the attack timer
             if (audioSource.isPlaying)
             {
                 audioSource.Stop();
             }
-            Invoke("DelayPlayAttackSound",1);
+            Invoke("DelayPlayAttackSound", 1); // Delay attack sound by 1 second
         }
     }
+
     /// <summary>
-    /// 延时播放攻击音效
+    /// Play attack sound after a delay
     /// </summary>
     private void DelayPlayAttackSound()
     {
-        pc.TakeDamage(attackValue);
-        audioSource.PlayOneShot(attackAudio);
+        pc.TakeDamage(attackValue); // Deal damage to the player
+        audioSource.PlayOneShot(attackAudio); // Play attack sound effect
     }
 }

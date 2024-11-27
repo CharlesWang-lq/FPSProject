@@ -5,52 +5,54 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-//*****************************************
-//功能说明：
-//***************************************** 
+
+
+
+
+
 public class PlayerController : MonoBehaviour
 {
-    public float moveSpeed;//移动速度
-    public float rotateSpeed;//旋转角度
-    private float angleY;//左右看角度，绕Y轴转
-    private float angleX;//上下看角度，绕X轴转
-    public Animator animator;//动画控制器
-    public Rigidbody rigid;//刚体
-    public float jumpForce;//跳跃力
-    public Transform gunPointTrans;//枪口位置
-    public GameObject bloodEffectGo;//溅血特效预制体
-    public GameObject grassEffectGo;//射击到地面特效预制体
-    public GameObject pinkFlowerEffectGo;//粉色花
-    public GameObject woodEffectGo;//树干
-    public GameObject riverEffectGo;//水
-    public GameObject otherEffectGo;//其他特效
+    public float moveSpeed; // Movement speed
+    public float rotateSpeed; // Rotation angle
+    private float angleY; // Horizontal view angle, rotates around Y-axis
+    private float angleX; // Vertical view angle, rotates around X-axis
+    public Animator animator; // Animation controller
+    public Rigidbody rigid; // Rigidbody
+    public float jumpForce; // Jump force
+    public Transform gunPointTrans; // Gun muzzle position
+    public GameObject bloodEffectGo; // Blood effect prefab
+    public GameObject grassEffectGo; // Ground hit effect prefab
+    public GameObject pinkFlowerEffectGo; // Pink flower effect
+    public GameObject woodEffectGo; // Tree trunk effect
+    public GameObject riverEffectGo; // Water effect
+    public GameObject otherEffectGo; // Other effects
 
-    public float attackCD;//攻击CD
-    public float attackTimer;//记录上一次攻击时间
-    public Transform attackEffectTrans;//生成攻击特效位置
-    public GameObject singleAttackEffectGo;//点射枪攻击特效
+    public float attackCD; // Attack cooldown
+    public float attackTimer; // Records last attack time
+    public Transform attackEffectTrans; // Position for spawning attack effects
+    public GameObject singleAttackEffectGo; // Single-shot gun attack effect
 
-    public GUNTYPE gunType;//当前使用的枪类型
-    public GameObject autoAttackEffectGo;//机关枪攻击特效
-    public GameObject snipingAttackEffectGo;//狙击枪攻击特效
-    //背包子弹总数
-    private Dictionary<GUNTYPE, int> bulletsBag=new Dictionary<GUNTYPE, int>();
-    //弹夹里的子弹数
+    public GUNTYPE gunType; // Current gun type
+    public GameObject autoAttackEffectGo; // Automatic gun attack effect
+    public GameObject snipingAttackEffectGo; // Sniper gun attack effect
+    // Total bullets in inventory
+    private Dictionary<GUNTYPE, int> bulletsBag = new Dictionary<GUNTYPE, int>();
+    // Bullets in the clip
     private Dictionary<GUNTYPE, int> bulletsClip = new Dictionary<GUNTYPE, int>();
 
     public int maxSingleShotBullets;
     public int maxAutoShotBullets;
     public int maxSnipingShotBullets;
 
-    public bool isReloading;//正在填充子弹
+    public bool isReloading; // Reloading status
 
     public GameObject[] gunGo;
 
-    public GameObject scope;//倍镜
+    public GameObject scope; // Scope
 
     public int HP;
 
-    //每种武器对应的子弹威力
+    // Bullet power for each weapon type
     private Dictionary<GUNTYPE, int> gunWeaponDamage = new Dictionary<GUNTYPE, int>();
     
     public AudioSource audioSource;
@@ -78,7 +80,7 @@ public class PlayerController : MonoBehaviour
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        bulletsBag.Add(GUNTYPE.SINGLESHOT,30);
+        bulletsBag.Add(GUNTYPE.SINGLESHOT, 30);
         bulletsBag.Add(GUNTYPE.AUTO, 50);
         bulletsBag.Add(GUNTYPE.SNIPING, 5);
         bulletsClip.Add(GUNTYPE.SINGLESHOT, maxSingleShotBullets);
@@ -102,26 +104,27 @@ public class PlayerController : MonoBehaviour
         }
         OpenOrCloseScope();
     }
+
     /// <summary>
-    /// 玩家移动
+    /// Player movement
     /// </summary>
     private void PlayerMove()
     {
-        //玩家垂直轴向输入
+        // Vertical axis input
         float verticalInput = Input.GetAxis("Vertical");
-        //玩家水平轴向输入
+        // Horizontal axis input
         float horizontalInput = Input.GetAxis("Horizontal");
-        //玩家在垂直轴向上的位移
+        // Vertical displacement
         Vector3 movementV = transform.forward * verticalInput * moveSpeed
             * Time.deltaTime;
-        //玩家在水平轴向上的位移
+        // Horizontal displacement
         Vector3 movementH = transform.right * horizontalInput * moveSpeed
             * Time.deltaTime;
-        //把每一秒移动的位移加到位置上
+        // Add displacement to position
         transform.position += movementV + movementH;
-        animator.SetFloat("MoveX",horizontalInput);
+        animator.SetFloat("MoveX", horizontalInput);
         animator.SetFloat("MoveY", verticalInput);
-        if (verticalInput>0||horizontalInput>0)
+        if (verticalInput > 0 || horizontalInput > 0)
         {
             if (!moveAudioSource.isPlaying)
             {
@@ -136,30 +139,27 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
     /// <summary>
-    /// 转头看
+    /// Look around
     /// </summary>
     private void LookAround()
     {
-        //左右看
-        //鼠标水平轴向输入
-        float mouseX = Input.GetAxis("Mouse X");
-        //左右看，改变y的值(玩家操作值)
-        float lookHAngleY = mouseX * rotateSpeed;
+        // Horizontal view
+        float mouseX = Input.GetAxis("Mouse X"); // Mouse horizontal axis input
+        float lookHAngleY = mouseX * rotateSpeed; // Adjust horizontal view angle
         angleY = angleY + lookHAngleY;
 
-        //上下看
-        //鼠标垂直轴向输入(玩家操作值)
-        float mouseY = -Input.GetAxis("Mouse Y");
-        //上下看，改变x的值
-        float lookVAngleX = mouseY * rotateSpeed;
-        angleX =Mathf.Clamp(angleX + lookVAngleX,-60,60);
+        // Vertical view
+        float mouseY = -Input.GetAxis("Mouse Y"); // Mouse vertical axis input
+        float lookVAngleX = mouseY * rotateSpeed; // Adjust vertical view angle
+        angleX = Mathf.Clamp(angleX + lookVAngleX, -60, 60);
 
-        transform.eulerAngles = new Vector3(
-            angleX, angleY, transform.eulerAngles.z);
+        transform.eulerAngles = new Vector3(angleX, angleY, transform.eulerAngles.z);
     }
+
     /// <summary>
-    /// 攻击
+    /// Attack functionality
     /// </summary>
     private void Attack()
     {
@@ -181,26 +181,28 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
     /// <summary>
-    /// 跳跃
+    /// Jump functionality
     /// </summary>
     private void Jump()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            rigid.AddForce(jumpForce*Vector3.up);
+            rigid.AddForce(jumpForce * Vector3.up);
             audioSource.PlayOneShot(jumpAudio);
         }
     }
+
     /// <summary>
-    /// 切换武器
+    /// Switch weapons
     /// </summary>
     private void ChangeGun()
     {
-        if (Input.GetKeyDown(KeyCode.C)&&!isReloading)
+        if (Input.GetKeyDown(KeyCode.C) && !isReloading)
         {
             gunType++;
-            if (gunType>GUNTYPE.SNIPING)
+            if (gunType > GUNTYPE.SNIPING)
             {
                 gunType = 0;
             }
@@ -223,8 +225,9 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
     /// <summary>
-    /// 显示对应的游戏物体
+    /// Display the corresponding game object
     /// </summary>
     private void ChangeGunGameObject(int gunLevel)
     {
@@ -235,18 +238,18 @@ public class PlayerController : MonoBehaviour
         }
         gunGo[gunLevel].SetActive(true);
         gunUIGos[gunLevel].SetActive(true);
-        bulletText.text ="X"+ bulletsClip[gunType].ToString();
+        bulletText.text = "X" + bulletsClip[gunType].ToString();
     }
 
     /// <summary>
-    /// 点射枪攻击
+    /// Single-shot gun attack
     /// </summary>
     private void SingleShotAttack()
     {
         if (Input.GetMouseButtonDown(0) && Time.time - attackTimer >= attackCD)
         {
-            //取到当前使用枪对应的弹夹的子弹数量
-            if (bulletsClip[gunType] > 0)//弹夹还有子弹，可以攻击
+            // Get the number of bullets in the clip for the current gun
+            if (bulletsClip[gunType] > 0) // If the clip has bullets, attack is possible
             {
                 PlaySound(singleShootAudio);
                 bulletsClip[gunType]--;
@@ -257,21 +260,22 @@ public class PlayerController : MonoBehaviour
                 go.transform.localEulerAngles = Vector3.zero;
                 Invoke("GunAttack", 0.1f);
             }
-            else//弹夹里边子弹用完了，需要从背包里拿子弹填充到弹夹里
+            else // If the clip is empty, reload bullets from inventory
             {
                 Reload();
             }
         }
     }
+
     /// <summary>
-    /// 机关枪攻击
+    /// Automatic gun attack
     /// </summary>
     private void AutoAttack()
     {
-        if (Input.GetMouseButton(0)&&Time.time-attackTimer>=attackCD)
+        if (Input.GetMouseButton(0) && Time.time - attackTimer >= attackCD)
         {
-            //取到当前使用枪对应的弹夹的子弹数量
-            if (bulletsClip[gunType] > 0)//弹夹还有子弹，可以攻击
+            // Get the number of bullets in the clip for the current gun
+            if (bulletsClip[gunType] > 0) // If the clip has bullets, attack is possible
             {
                 PlaySound(autoShootAudio);
                 bulletsClip[gunType]--;
@@ -282,7 +286,7 @@ public class PlayerController : MonoBehaviour
                 go.transform.localEulerAngles = Vector3.zero;
                 GunAttack();
             }
-            else//弹夹里边子弹用完了，需要从背包里拿子弹填充到弹夹里
+            else // If the clip is empty, reload bullets from inventory
             {
                 Reload();
             }
@@ -292,15 +296,16 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("AutoAttack", false);
         }
     }
+
     /// <summary>
-    /// 狙击枪攻击
+    /// Sniper gun attack
     /// </summary>
     private void SnipingAttack()
     {
         if (Input.GetMouseButtonDown(0) && Time.time - attackTimer >= attackCD)
         {
-            //取到当前使用枪对应的弹夹的子弹数量
-            if (bulletsClip[gunType] > 0)//弹夹还有子弹，可以攻击
+            // Get the number of bullets in the clip for the current gun
+            if (bulletsClip[gunType] > 0) // If the clip has bullets, attack is possible
             {
                 PlaySound(snipingShootAudio);
                 bulletsClip[gunType]--;
@@ -311,14 +316,15 @@ public class PlayerController : MonoBehaviour
                 go.transform.localEulerAngles = Vector3.zero;
                 Invoke("GunAttack", 0.25f);
             }
-            else//弹夹里边子弹用完了，需要从背包里拿子弹填充到弹夹里
+            else // If the clip is empty, reload bullets from inventory
             {
                 Reload();
             }
         }
     }
+
     /// <summary>
-    /// 具体的射击功能
+    /// Core shooting functionality
     /// </summary>
     private void GunAttack()
     {
@@ -326,7 +332,7 @@ public class PlayerController : MonoBehaviour
         attackTimer = Time.time;
         if (Physics.Raycast(gunPointTrans.position, gunPointTrans.forward, out hit, 5))
         {
-            //特效生成
+            // Generate effects based on the hit object
             switch (hit.collider.tag)
             {
                 case "Enemy":
@@ -362,19 +368,20 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
     /// <summary>
-    /// 填充子弹
+    /// Reload bullets
     /// </summary>
     private void Reload()
     {
-        bool canReload=false;//是否可以装子弹
+        bool canReload = false; // Determines if bullets can be reloaded
         switch (gunType)
         {
             case GUNTYPE.SINGLESHOT:
-                if (bulletsClip[gunType]<maxSingleShotBullets)
+                if (bulletsClip[gunType] < maxSingleShotBullets)
                 {
                     canReload = true;
-                }                
+                }
                 break;
             case GUNTYPE.AUTO:
                 if (bulletsClip[gunType] < maxAutoShotBullets)
@@ -383,7 +390,7 @@ public class PlayerController : MonoBehaviour
                 }
                 break;
             case GUNTYPE.SNIPING:
-                if (bulletsClip[gunType] <maxSnipingShotBullets)
+                if (bulletsClip[gunType] < maxSnipingShotBullets)
                 {
                     canReload = true;
                 }
@@ -391,10 +398,10 @@ public class PlayerController : MonoBehaviour
             default:
                 break;
         }
-        if (canReload)//弹夹不满可以填充
+        if (canReload) // If the clip isn't full, reload it
         {
             PlaySound(reloadAudio);
-            if (bulletsBag[gunType] > 0)//背包里没子弹的时候
+            if (bulletsBag[gunType] > 0) // If the inventory still has bullets
             {
                 isReloading = true;
                 Invoke("RecoverAttackState", 2.667f);
@@ -403,16 +410,14 @@ public class PlayerController : MonoBehaviour
                 {
                     case GUNTYPE.SINGLESHOT:
                         if (bulletsBag[gunType] >= maxSingleShotBullets)
-                        //背包里的剩余子弹数是足够填充满弹夹的
                         {
-                            if (bulletsClip[gunType] > 0) //如果弹夹里有剩余，补满
+                            if (bulletsClip[gunType] > 0) // If the clip has remaining bullets, fill it up
                             {
-                                //补充数量
                                 int bulletNum = maxSingleShotBullets - bulletsClip[gunType];
                                 bulletsBag[gunType] -= bulletNum;
                                 bulletsClip[gunType] += bulletNum;
                             }
-                            else  //没剩余，则需要装入最大数量
+                            else // If the clip is empty, fill it to maximum capacity
                             {
                                 bulletsBag[gunType] -= maxSingleShotBullets;
                                 bulletsClip[gunType] += maxSingleShotBullets;
@@ -420,7 +425,6 @@ public class PlayerController : MonoBehaviour
                         }
                         else
                         {
-                            //不够加满的时候就把剩余的都填充到弹夹里
                             bulletsClip[gunType] += bulletsBag[gunType];
                             bulletsBag[gunType] = 0;
                         }
@@ -428,14 +432,13 @@ public class PlayerController : MonoBehaviour
                     case GUNTYPE.AUTO:
                         if (bulletsBag[gunType] >= maxAutoShotBullets)
                         {
-                            if (bulletsClip[gunType] > 0) //如果弹夹里有剩余，补满
+                            if (bulletsClip[gunType] > 0) // If the clip has remaining bullets, fill it up
                             {
-                                //补充数量
                                 int bulletNum = maxAutoShotBullets - bulletsClip[gunType];
                                 bulletsBag[gunType] -= bulletNum;
                                 bulletsClip[gunType] += bulletNum;
                             }
-                            else  //没剩余，则需要装入最大数量
+                            else // If the clip is empty, fill it to maximum capacity
                             {
                                 bulletsBag[gunType] -= maxAutoShotBullets;
                                 bulletsClip[gunType] += maxAutoShotBullets;
@@ -450,14 +453,13 @@ public class PlayerController : MonoBehaviour
                     case GUNTYPE.SNIPING:
                         if (bulletsBag[gunType] >= maxSnipingShotBullets)
                         {
-                            if (bulletsClip[gunType] > 0) //如果弹夹里有剩余，补满
+                            if (bulletsClip[gunType] > 0) // If the clip has remaining bullets, fill it up
                             {
-                                //补充数量
                                 int bulletNum = maxSnipingShotBullets - bulletsClip[gunType];
                                 bulletsBag[gunType] -= bulletNum;
                                 bulletsClip[gunType] += bulletNum;
                             }
-                            else  //没剩余，则需要装入最大数量
+                            else // If the clip is empty, fill it to maximum capacity
                             {
                                 bulletsBag[gunType] -= maxSnipingShotBullets;
                                 bulletsClip[gunType] += maxSnipingShotBullets;
@@ -477,19 +479,21 @@ public class PlayerController : MonoBehaviour
         }
         animator.SetBool("AutoAttack", false);
     }
+
     /// <summary>
-    /// 填充完毕，可以攻击
+    /// Finished reloading, ready to attack
     /// </summary>
     private void RecoverAttackState()
     {
         isReloading = false;
     }
+
     /// <summary>
-    /// 开关倍镜
+    /// Toggle the scope
     /// </summary>
     private void OpenOrCloseScope()
     {
-        if (Input.GetMouseButton(1)&&gunType==GUNTYPE.SNIPING)
+        if (Input.GetMouseButton(1) && gunType == GUNTYPE.SNIPING)
         {
             scope.SetActive(true);
             scopeUIGo.SetActive(true);
@@ -500,16 +504,17 @@ public class PlayerController : MonoBehaviour
             scopeUIGo.SetActive(false);
         }
     }
+
     /// <summary>
-    /// 收到伤害
+    /// Take damage
     /// </summary>
-    /// <param name="value"></param>
+    /// <param name="value">Amount of damage</param>
     public void TakeDamage(int value)
     {
         bloodUIGo.SetActive(true);
         Invoke("HideBloodUIGo", 0.5f);
         HP -= value;
-        if (HP<=0)
+        if (HP <= 0)
         {
             HP = 0;
             gameOverPanel.SetActive(true);
@@ -518,13 +523,15 @@ public class PlayerController : MonoBehaviour
         }
         playerHPText.text = HP.ToString();
     }
+
     /// <summary>
-    /// 播放音频
+    /// Play sound effects
     /// </summary>
     public void PlaySound(AudioClip ac)
     {
         audioSource.PlayOneShot(ac);
     }
+
     private void HideBloodUIGo()
     {
         bloodUIGo.SetActive(false);
@@ -535,6 +542,7 @@ public class PlayerController : MonoBehaviour
         SceneManager.LoadScene(0);
     }
 }
+
 [System.Serializable]
 public enum GUNTYPE
 { 
