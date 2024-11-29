@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class PlayerController : MonoBehaviour //ai help generator some of the code
 {
@@ -65,6 +66,8 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
     public GameObject[] gunUIGos;
 
     public Text bulletText;
+    
+    public Text ammoBagText; 
 
     public GameObject bloodUIGo;
 
@@ -87,6 +90,7 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
         gunWeaponDamage.Add(GUNTYPE.SINGLESHOT, 2);
         gunWeaponDamage.Add(GUNTYPE.AUTO, 1);
         gunWeaponDamage.Add(GUNTYPE.SNIPING, 5);
+        ammoBagText.text = "X" + bulletsBag[gunType];
     }
 
     void Update()
@@ -237,6 +241,8 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
         gunGo[gunLevel].SetActive(true);
         gunUIGos[gunLevel].SetActive(true);
         bulletText.text = "X" + bulletsClip[gunType].ToString();
+        ammoBagText.text = "X" + bulletsBag[gunType].ToString();
+       
     }
 
     /// <summary>
@@ -366,27 +372,22 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
     /// </summary>
     private void Reload()
     {
-        // Check if reloading is possible based on the current gun type
         int maxBullets = GetMaxBulletsForGun(gunType);
         if (bulletsClip[gunType] >= maxBullets) return;
-
-        if (bulletsBag[gunType] > 0) // If the inventory still has bullets
+        if (bulletsBag[gunType] > 0)
         {
             PlaySound(reloadAudio);
             isReloading = true;
-            isFiring = false; // Reset firing state during reload
+            isFiring = false;
             Invoke("RecoverAttackState", 2.667f);
             animator.SetTrigger("Reload");
 
-            // Calculate the number of bullets to reload
             int bulletsNeeded = maxBullets - bulletsClip[gunType];
             int bulletsToReload = Mathf.Min(bulletsBag[gunType], bulletsNeeded);
 
-            // Update clip and bag
             bulletsClip[gunType] += bulletsToReload;
             bulletsBag[gunType] -= bulletsToReload;
-
-            // Update the UI
+            ammoBagText.text = "X" + bulletsBag[gunType].ToString();
             bulletText.text = "X" + bulletsClip[gunType].ToString();
         }
 
