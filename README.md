@@ -49,5 +49,7 @@ https://assetstore.unity.com/packages/3d/characters/3d-characters-zombie-hospita
 
 add reticle✅
 
+scope for sniper, rfile and machinegun✅
+
 there are serval already knew bug exist in the game
 bug such as when player reach the edge or conner of the playground, there is a possiblity to fall off, 

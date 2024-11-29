@@ -72,6 +72,8 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
 
     public GameObject gameOverPanel;
 
+    private bool isFiring = false; // Tracks whether the player is currently firing
+
     void Start()
     {
         Cursor.visible = false;
@@ -155,6 +157,18 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
     }
 
     /// <summary>
+    /// Jump functionality
+    /// </summary>
+    private void Jump()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            rigid.AddForce(jumpForce * Vector3.up);
+            audioSource.PlayOneShot(jumpAudio);
+        }
+    }
+    
+    /// <summary>
     /// Attack functionality
     /// </summary>
     private void Attack()
@@ -179,23 +193,11 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
     }
 
     /// <summary>
-    /// Jump functionality
-    /// </summary>
-    private void Jump()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            rigid.AddForce(jumpForce * Vector3.up);
-            audioSource.PlayOneShot(jumpAudio);
-        }
-    }
-
-    /// <summary>
     /// Switch weapons
     /// </summary>
     private void ChangeGun()
     {
-        if (Input.GetKeyDown(KeyCode.C) && !isReloading)
+        if (Input.GetKeyDown(KeyCode.C) && !isReloading && !isFiring)
         {
             gunType++;
             if (gunType > GUNTYPE.SNIPING)
@@ -240,83 +242,77 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
     /// <summary>
     /// Single-shot gun attack
     /// </summary>
+    private void HandleAttack(AudioClip shootAudio, GameObject attackEffectPrefab, string animationTrigger, bool isAuto = false)
+    {
+        if ((isAuto ? Input.GetMouseButton(0) : Input.GetMouseButtonDown(0)) && Time.time - attackTimer >= attackCD)
+        {
+            isFiring = true; // Set firing state
+
+            if (bulletsClip[gunType] > 0) // If the clip has bullets, attack is possible
+            {
+                PlaySound(shootAudio);
+                bulletsClip[gunType]--;
+                UpdateBulletText();
+                
+                if (isAuto)
+                    animator.SetBool(animationTrigger, true);
+                else
+                    animator.SetTrigger(animationTrigger);
+
+                CreateAttackEffect(attackEffectPrefab);
+                
+                if (!isAuto)
+                    Invoke("GunAttack", GetInvokeDelay());
+                else
+                    GunAttack();
+            }
+            else // If the clip is empty, reload bullets from inventory
+            {
+                Reload();
+            }
+        }
+        else if (isAuto && Input.GetMouseButtonUp(0)) // Stop automatic attack when button is released
+        {
+            isFiring = false; // Reset firing state
+            animator.SetBool(animationTrigger, false);
+        }
+    }
+
+    private void CreateAttackEffect(GameObject attackEffectPrefab)
+    {
+        GameObject go = Instantiate(attackEffectPrefab, attackEffectTrans);
+        go.transform.localPosition = Vector3.zero;
+        go.transform.localEulerAngles = Vector3.zero;
+    }
+
+    private void UpdateBulletText()
+    {
+        bulletText.text = "X" + bulletsClip[gunType].ToString();
+    }
+
+    private float GetInvokeDelay()
+    {
+        return gunType == GUNTYPE.SNIPING ? 0.25f : 0.1f; // Add other delays if necessary
+    }
+
+    // Single-shot gun attack
     private void SingleShotAttack()
     {
-        if (Input.GetMouseButtonDown(0) && Time.time - attackTimer >= attackCD)
-        {
-            // Get the number of bullets in the clip for the current gun
-            if (bulletsClip[gunType] > 0) // If the clip has bullets, attack is possible
-            {
-                PlaySound(singleShootAudio);
-                bulletsClip[gunType]--;
-                bulletText.text = "X" + bulletsClip[gunType].ToString();
-                animator.SetTrigger("SingleAttack");
-                GameObject go = Instantiate(singleAttackEffectGo, attackEffectTrans);
-                go.transform.localPosition = Vector3.zero;
-                go.transform.localEulerAngles = Vector3.zero;
-                Invoke("GunAttack", 0.1f);
-            }
-            else // If the clip is empty, reload bullets from inventory
-            {
-                Reload();
-            }
-        }
+        HandleAttack(singleShootAudio, singleAttackEffectGo, "SingleAttack");
+        isFiring = false; // Reset firing state
     }
 
-    /// <summary>
-    /// Automatic gun attack
-    /// </summary>
+    // Automatic gun attack
     private void AutoAttack()
     {
-        if (Input.GetMouseButton(0) && Time.time - attackTimer >= attackCD)
-        {
-            // Get the number of bullets in the clip for the current gun
-            if (bulletsClip[gunType] > 0) // If the clip has bullets, attack is possible
-            {
-                PlaySound(autoShootAudio);
-                bulletsClip[gunType]--;
-                bulletText.text = "X" + bulletsClip[gunType].ToString();
-                animator.SetBool("AutoAttack", true);
-                GameObject go = Instantiate(autoAttackEffectGo, attackEffectTrans);
-                go.transform.localPosition = Vector3.zero;
-                go.transform.localEulerAngles = Vector3.zero;
-                GunAttack();
-            }
-            else // If the clip is empty, reload bullets from inventory
-            {
-                Reload();
-            }
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            animator.SetBool("AutoAttack", false);
-        }
+        HandleAttack(autoShootAudio, autoAttackEffectGo, "AutoAttack", true);
     }
 
-    /// <summary>
-    /// Sniper gun attack
-    /// </summary>
+    // Sniper gun attack
     private void SnipingAttack()
     {
-        if (Input.GetMouseButtonDown(0) && Time.time - attackTimer >= attackCD)
-        {
-            // Get the number of bullets in the clip for the current gun
-            if (bulletsClip[gunType] > 0) // If the clip has bullets, attack is possible
-            {
-                PlaySound(snipingShootAudio);
-                bulletsClip[gunType]--;
-                bulletText.text = "X" + bulletsClip[gunType].ToString();
-                animator.SetTrigger("SnipingAttack");
-                GameObject go = Instantiate(snipingAttackEffectGo, attackEffectTrans);
-                go.transform.localPosition = Vector3.zero;
-                go.transform.localEulerAngles = Vector3.zero;
-                Invoke("GunAttack", 0.25f);
-            }
-            else // If the clip is empty, reload bullets from inventory
-            {
-                Reload();
-            }
-        }
+        HandleAttack(snipingShootAudio, snipingAttackEffectGo, "SnipingAttack");
+        isFiring = false; // Reset firing state
     }
 
     /// <summary>
@@ -370,110 +366,43 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
     /// </summary>
     private void Reload()
     {
-        bool canReload = false; // Determines if bullets can be reloaded
-        switch (gunType)
-        {
-            case GUNTYPE.SINGLESHOT:
-                if (bulletsClip[gunType] < maxSingleShotBullets)
-                {
-                    canReload = true;
-                }
-                break;
-            case GUNTYPE.AUTO:
-                if (bulletsClip[gunType] < maxAutoShotBullets)
-                {
-                    canReload = true;
-                }
-                break;
-            case GUNTYPE.SNIPING:
-                if (bulletsClip[gunType] < maxSnipingShotBullets)
-                {
-                    canReload = true;
-                }
-                break;
-            default:
-                break;
-        }
-        if (canReload) // If the clip isn't full, reload it
+        // Check if reloading is possible based on the current gun type
+        int maxBullets = GetMaxBulletsForGun(gunType);
+        if (bulletsClip[gunType] >= maxBullets) return;
+
+        if (bulletsBag[gunType] > 0) // If the inventory still has bullets
         {
             PlaySound(reloadAudio);
-            if (bulletsBag[gunType] > 0) // If the inventory still has bullets
-            {
-                isReloading = true;
-                Invoke("RecoverAttackState", 2.667f);
-                animator.SetTrigger("Reload");
-                switch (gunType)
-                {
-                    case GUNTYPE.SINGLESHOT:
-                        if (bulletsBag[gunType] >= maxSingleShotBullets)
-                        {
-                            if (bulletsClip[gunType] > 0) // If the clip has remaining bullets, fill it up
-                            {
-                                int bulletNum = maxSingleShotBullets - bulletsClip[gunType];
-                                bulletsBag[gunType] -= bulletNum;
-                                bulletsClip[gunType] += bulletNum;
-                            }
-                            else // If the clip is empty, fill it to maximum capacity
-                            {
-                                bulletsBag[gunType] -= maxSingleShotBullets;
-                                bulletsClip[gunType] += maxSingleShotBullets;
-                            }
-                        }
-                        else
-                        {
-                            bulletsClip[gunType] += bulletsBag[gunType];
-                            bulletsBag[gunType] = 0;
-                        }
-                        break;
-                    case GUNTYPE.AUTO:
-                        if (bulletsBag[gunType] >= maxAutoShotBullets)
-                        {
-                            if (bulletsClip[gunType] > 0) // If the clip has remaining bullets, fill it up
-                            {
-                                int bulletNum = maxAutoShotBullets - bulletsClip[gunType];
-                                bulletsBag[gunType] -= bulletNum;
-                                bulletsClip[gunType] += bulletNum;
-                            }
-                            else // If the clip is empty, fill it to maximum capacity
-                            {
-                                bulletsBag[gunType] -= maxAutoShotBullets;
-                                bulletsClip[gunType] += maxAutoShotBullets;
-                            }
-                        }
-                        else
-                        {
-                            bulletsClip[gunType] += bulletsBag[gunType];
-                            bulletsBag[gunType] = 0;
-                        }
-                        break;
-                    case GUNTYPE.SNIPING:
-                        if (bulletsBag[gunType] >= maxSnipingShotBullets)
-                        {
-                            if (bulletsClip[gunType] > 0) // If the clip has remaining bullets, fill it up
-                            {
-                                int bulletNum = maxSnipingShotBullets - bulletsClip[gunType];
-                                bulletsBag[gunType] -= bulletNum;
-                                bulletsClip[gunType] += bulletNum;
-                            }
-                            else // If the clip is empty, fill it to maximum capacity
-                            {
-                                bulletsBag[gunType] -= maxSnipingShotBullets;
-                                bulletsClip[gunType] += maxSnipingShotBullets;
-                            }
-                        }
-                        else
-                        {
-                            bulletsClip[gunType] += bulletsBag[gunType];
-                            bulletsBag[gunType] = 0;
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
+            isReloading = true;
+            isFiring = false; // Reset firing state during reload
+            Invoke("RecoverAttackState", 2.667f);
+            animator.SetTrigger("Reload");
+
+            // Calculate the number of bullets to reload
+            int bulletsNeeded = maxBullets - bulletsClip[gunType];
+            int bulletsToReload = Mathf.Min(bulletsBag[gunType], bulletsNeeded);
+
+            // Update clip and bag
+            bulletsClip[gunType] += bulletsToReload;
+            bulletsBag[gunType] -= bulletsToReload;
+
+            // Update the UI
             bulletText.text = "X" + bulletsClip[gunType].ToString();
         }
+
         animator.SetBool("AutoAttack", false);
+    }
+
+    // Helper function to get the maximum bullets for the current gun type
+    private int GetMaxBulletsForGun(GUNTYPE gunType)
+    {
+        return gunType switch
+        {
+            GUNTYPE.SINGLESHOT => maxSingleShotBullets,
+            GUNTYPE.AUTO => maxAutoShotBullets,
+            GUNTYPE.SNIPING => maxSnipingShotBullets,
+            _ => 0
+        };
     }
 
     /// <summary>
