@@ -489,7 +489,7 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
     /// </summary>
     private void OpenOrCloseScope()
     {
-        if (Input.GetMouseButton(1) && gunType == GUNTYPE.SNIPING)
+        if (Input.GetMouseButton(1)||Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
         {
             scope.SetActive(true);
             scopeUIGo.SetActive(true);

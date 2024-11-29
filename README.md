@@ -47,5 +47,7 @@ zombie laying down when dead✅
 https://assetstore.unity.com/packages/3d/characters/robots/robot-hero-pbr-hp-polyart-106154 player model and other post-apocalyptic world fiction asset from free unity asset store✅
 https://assetstore.unity.com/packages/3d/characters/3d-characters-zombie-hospital-lowpoly-pack-lite-274047 zombie model from free unity asset store✅
 
+add reticle✅
+
 there are serval already knew bug exist in the game
 bug such as when player reach the edge or conner of the playground, there is a possiblity to fall off, 
