@@ -4657,7 +4657,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: X10
+  m_Text: X30
 --- !u!222 &147155837
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -30767,6 +30767,7 @@ MonoBehaviour:
   fallOffScreenEffect: {fileID: 975225214}
   scopeUIGo: {fileID: 1726648816}
   gameOverPanel: {fileID: 1845531897}
+  damageTextPrefab: {fileID: 8183981384176781366, guid: 751d5e5b1108847f180fd62396ff61e0, type: 3}
 --- !u!54 &910226175
 Rigidbody:
   m_ObjectHideFlags: 0

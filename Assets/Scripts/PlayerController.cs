@@ -78,6 +78,7 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
 
     private bool isFiring = false; // Tracks whether the player is currently firing
     private bool isFallingOff = false; // Tracks if the player is in fall-off process
+    public GameObject damageTextPrefab; // Assign your DamageText prefab in the Inspector
 
     void Start()
     {
@@ -341,8 +342,20 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
             switch (hit.collider.tag)
             {
                 case "Enemy":
-                    hit.transform.GetComponent<Enemy>().TakeDamage(gunWeaponDamage[gunType]);
-                    Instantiate(bloodEffectGo, hit.point, Quaternion.identity);
+                // Apply damage to enemy
+                Enemy enemy = hit.transform.GetComponent<Enemy>();
+                int damageDealt = gunWeaponDamage[gunType];
+                enemy.TakeDamage(damageDealt);
+
+                // Spawn damage popup slightly above the hit point
+                Vector3 worldPositionAbove = hit.point + Vector3.up * 1.1f;
+                Vector3 screenPosition = Camera.main.WorldToScreenPoint(worldPositionAbove);
+
+                GameObject damagePopup = Instantiate(damageTextPrefab, screenPosition, Quaternion.identity, FindObjectOfType<Canvas>().transform);
+                damagePopup.GetComponent<DamagePopup>().Setup(damageDealt);
+
+                // Spawn blood effect
+                Instantiate(bloodEffectGo, hit.point, Quaternion.identity);
                     break;
                 case "Flowers":
                     PlaySound(hitGroundAudio);
