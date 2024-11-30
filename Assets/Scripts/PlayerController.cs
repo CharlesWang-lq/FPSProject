@@ -347,15 +347,22 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
                 int damageDealt = gunWeaponDamage[gunType];
                 enemy.TakeDamage(damageDealt);
 
-                // Spawn damage popup slightly above the hit point
-                Vector3 worldPositionAbove = hit.point + Vector3.up * 1.1f;
-                Vector3 screenPosition = Camera.main.WorldToScreenPoint(worldPositionAbove);
-
-                GameObject damagePopup = Instantiate(damageTextPrefab, screenPosition, Quaternion.identity, FindObjectOfType<Canvas>().transform);
-                damagePopup.GetComponent<DamagePopup>().Setup(damageDealt);
-
-                // Spawn blood effect
+                // Spawn blood effect at the hit point
                 Instantiate(bloodEffectGo, hit.point, Quaternion.identity);
+
+                // Add vertical offset to the hit point
+                Vector3 worldPositionAbove = hit.point + Vector3.up ; // Adjust offset as needed
+
+                // Convert world position to screen position
+                Vector3 screenPosition = Camera.main.WorldToScreenPoint(worldPositionAbove)*1.1f;
+
+                // Instantiate the damage popup as a child of the Canvas
+                GameObject damagePopup = Instantiate(damageTextPrefab, FindObjectOfType<Canvas>().transform);
+                RectTransform rectTransform = damagePopup.GetComponent<RectTransform>();
+                rectTransform.position = screenPosition; // Set initial position in screen space
+
+                // Pass the damage value to the popup
+                damagePopup.GetComponent<DamagePopup>().Setup(damageDealt);
                     break;
                 case "Flowers":
                     PlaySound(hitGroundAudio);
