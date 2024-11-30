@@ -4646,7 +4646,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 100
+    m_FontSize: 64
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 0
@@ -4657,7 +4657,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: ' '
+  m_Text: X10
 --- !u!222 &147155837
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -14149,85 +14149,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 722790667}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &493556729
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 493556732}
-  - component: {fileID: 493556731}
-  - component: {fileID: 493556730}
-  m_Layer: 5
-  m_Name: Text_HP (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &493556730
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 493556729}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.40784317, g: 0.6862745, b: 0.7960785, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 62
-    m_FontStyle: 1
-    m_BestFit: 0
-    m_MinSize: 10
-    m_MaxSize: 65
-    m_Alignment: 4
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: 100
---- !u!222 &493556731
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 493556729}
-  m_CullTransparentMesh: 1
---- !u!224 &493556732
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 493556729}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.3878, y: 2.3878, z: 2.3878}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1898039782}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -18, y: 189}
-  m_SizeDelta: {x: 230.4333, y: 69.154}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &494093618
 GameObject:
   m_ObjectHideFlags: 0
@@ -30804,7 +30725,7 @@ MonoBehaviour:
   gunPointTrans: {fileID: 186182626}
   bloodEffectGo: {fileID: 2300524307650561893, guid: d807f36641710b34b94bf0e2f55f5804, type: 3}
   grassEffectGo: {fileID: 2300524307650561893, guid: 224d96c0434cbd941bd6e2379b6399ed, type: 3}
-  pinkFlowerEffectGo: {fileID: 0}
+  pinkFlowerEffectGo: {fileID: 2300524307650561893, guid: aaf25a81a7fee5b419593a953fd38dec, type: 3}
   woodEffectGo: {fileID: 2300524307650561893, guid: 5d4c40b994d6f084480e97b1da9f60c2, type: 3}
   riverEffectGo: {fileID: 2300524307650561893, guid: be322705ef6232745a61f07c696c3efe, type: 3}
   otherEffectGo: {fileID: 2300524307650561893, guid: 67fb23b18133b4244b6710f4d1873f06, type: 3}
@@ -30830,7 +30751,7 @@ MonoBehaviour:
   autoShootAudio: {fileID: 8300000, guid: 3061c7b9b32d894478e4126ccce25ca3, type: 3}
   snipingShootAudio: {fileID: 8300000, guid: 69f7573c6b234e542b12918c77b81a87, type: 3}
   reloadAudio: {fileID: 8300000, guid: d4b01f53c3ff80043ab3bd5d4ba19567, type: 3}
-  hitGroundAudio: {fileID: 0}
+  hitGroundAudio: {fileID: 8300000, guid: af66162561d2eed40ad49268cab318bb, type: 3}
   jumpAudio: {fileID: 8300000, guid: 2513e42270e6a9348af2d7916a03e1cb, type: 3}
   fallOffAudio: {fileID: 8300000, guid: 75e5253039a6df04aa2a9ea430fb667e, type: 3}
   moveAudioSource: {fileID: 910226180}
@@ -30841,7 +30762,7 @@ MonoBehaviour:
   - {fileID: 706494498}
   bulletText: {fileID: 647429791}
   ammoBagText: {fileID: 147155836}
-  countdownText: {fileID: 493556730}
+  countdownText: {fileID: 0}
   bloodUIGo: {fileID: 883324315}
   fallOffScreenEffect: {fileID: 975225214}
   scopeUIGo: {fileID: 1726648816}
@@ -33495,7 +33416,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &975225215
 RectTransform:
   m_ObjectHideFlags: 0
@@ -33540,7 +33461,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 0.5882353}
+  m_Color: {r: 0.4516287, g: 0.45927987, b: 0.4811321, a: 0.5882353}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -62188,7 +62109,6 @@ RectTransform:
   - {fileID: 550788781}
   - {fileID: 1731463271}
   - {fileID: 2003490232}
-  - {fileID: 493556732}
   m_Father: {fileID: 551328174}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

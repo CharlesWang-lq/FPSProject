@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
     public GameObject snipingAttackEffectGo; // Sniper gun attack effect
     // Bullets in the clip
     private Dictionary<GUNTYPE, int> bulletsClip = new Dictionary<GUNTYPE, int>();
-
+    private Dictionary<GUNTYPE, int> bulletsBag = new Dictionary<GUNTYPE, int>();
     public int maxSingleShotBullets;
     public int maxAutoShotBullets;
     public int maxSnipingShotBullets;
@@ -83,15 +83,16 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        bulletsBag.Add(GUNTYPE.SINGLESHOT, 30);
+        bulletsBag.Add(GUNTYPE.AUTO, 50);
+        bulletsBag.Add(GUNTYPE.SNIPING, 5);
         bulletsClip.Add(GUNTYPE.SINGLESHOT, maxSingleShotBullets);
         bulletsClip.Add(GUNTYPE.AUTO, maxAutoShotBullets);
         bulletsClip.Add(GUNTYPE.SNIPING, maxSnipingShotBullets);
         gunWeaponDamage.Add(GUNTYPE.SINGLESHOT, 2);
         gunWeaponDamage.Add(GUNTYPE.AUTO, 1);
         gunWeaponDamage.Add(GUNTYPE.SNIPING, 5);
-        ammoBagText.text = "=∞";
-        fallOffScreenEffect.SetActive(false);
-        countdownText.gameObject.SetActive(false);
+        ammoBagText.text = "X" + bulletsBag[gunType];
     }
 
     void Update()
@@ -246,7 +247,8 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
         gunGo[gunLevel].SetActive(true);
         gunUIGos[gunLevel].SetActive(true);
         bulletText.text = "X" + bulletsClip[gunType].ToString();
-        ammoBagText.text = "=∞";
+        ammoBagText.text = "X" + bulletsBag[gunType].ToString();
+       
     }
 
     /// <summary>
@@ -379,15 +381,24 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
     {
         int maxBullets = GetMaxBulletsForGun(gunType);
         if (bulletsClip[gunType] >= maxBullets) return;
+        if (bulletsBag[gunType] > 0)
+        {
+            PlaySound(reloadAudio);
+            isReloading = true;
+            isFiring = false;
+            Invoke("RecoverAttackState", 2.667f);
+            animator.SetTrigger("Reload");
 
-        PlaySound(reloadAudio);
-        isReloading = true;
-        isFiring = false;
-        Invoke("RecoverAttackState", 2.667f);
-        animator.SetTrigger("Reload");
+            int bulletsNeeded = maxBullets - bulletsClip[gunType];
+            int bulletsToReload = Mathf.Min(bulletsBag[gunType], bulletsNeeded);
 
-        bulletsClip[gunType] = maxBullets;
-        UpdateBulletText();
+            bulletsClip[gunType] += bulletsToReload;
+            bulletsBag[gunType] -= bulletsToReload;
+            ammoBagText.text = "X" + bulletsBag[gunType].ToString();
+            bulletText.text = "X" + bulletsClip[gunType].ToString();
+        }
+
+        animator.SetBool("AutoAttack", false);
     }
 
     // Helper function to get the maximum bullets for the current gun type
