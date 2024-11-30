@@ -32,8 +32,6 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
     public GUNTYPE gunType; // Current gun type
     public GameObject autoAttackEffectGo; // Automatic gun attack effect
     public GameObject snipingAttackEffectGo; // Sniper gun attack effect
-    // Total bullets in inventory
-    private Dictionary<GUNTYPE, int> bulletsBag = new Dictionary<GUNTYPE, int>();
     // Bullets in the clip
     private Dictionary<GUNTYPE, int> bulletsClip = new Dictionary<GUNTYPE, int>();
 
@@ -59,6 +57,7 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
     public AudioClip reloadAudio;
     public AudioClip hitGroundAudio;
     public AudioClip jumpAudio;
+    public AudioClip fallOffAudio;
     public AudioSource moveAudioSource;
 
     public Text playerHPText;
@@ -67,44 +66,50 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
 
     public Text bulletText;
     
-    public Text ammoBagText; 
+    public Text ammoBagText;
+    public Text countdownText;
 
     public GameObject bloodUIGo;
+    public GameObject fallOffScreenEffect;
 
     public GameObject scopeUIGo;
 
     public GameObject gameOverPanel;
 
     private bool isFiring = false; // Tracks whether the player is currently firing
+    private bool isFallingOff = false; // Tracks if the player is in fall-off process
 
     void Start()
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        bulletsBag.Add(GUNTYPE.SINGLESHOT, 30);
-        bulletsBag.Add(GUNTYPE.AUTO, 50);
-        bulletsBag.Add(GUNTYPE.SNIPING, 5);
         bulletsClip.Add(GUNTYPE.SINGLESHOT, maxSingleShotBullets);
         bulletsClip.Add(GUNTYPE.AUTO, maxAutoShotBullets);
         bulletsClip.Add(GUNTYPE.SNIPING, maxSnipingShotBullets);
         gunWeaponDamage.Add(GUNTYPE.SINGLESHOT, 2);
         gunWeaponDamage.Add(GUNTYPE.AUTO, 1);
         gunWeaponDamage.Add(GUNTYPE.SNIPING, 5);
-        ammoBagText.text = "X" + bulletsBag[gunType];
+        ammoBagText.text = "=∞";
+        fallOffScreenEffect.SetActive(false);
+        countdownText.gameObject.SetActive(false);
     }
 
     void Update()
     {
-        PlayerMove();
-        LookAround();
-        Attack();
-        Jump();
-        ChangeGun();
-        if (Input.GetKeyDown(KeyCode.R))
+        if (!isFallingOff)
         {
-            Reload();
+            PlayerMove();
+            LookAround();
+            Attack();
+            Jump();
+            ChangeGun();
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                Reload();
+            }
+            OpenOrCloseScope();
+            CheckFallOffMap();
         }
-        OpenOrCloseScope();
     }
 
     /// <summary>
@@ -241,8 +246,7 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
         gunGo[gunLevel].SetActive(true);
         gunUIGos[gunLevel].SetActive(true);
         bulletText.text = "X" + bulletsClip[gunType].ToString();
-        ammoBagText.text = "X" + bulletsBag[gunType].ToString();
-       
+        ammoBagText.text = "=∞";
     }
 
     /// <summary>
@@ -272,13 +276,14 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
                 else
                     GunAttack();
             }
-            else // If the clip is empty, reload bullets from inventory
+            else // If the clip is empty, reload bullets
             {
                 Reload();
             }
         }
-        else if (isAuto && Input.GetMouseButtonUp(0)) // Stop automatic attack when button is released
+        else if (isAuto && Input.GetMouseButtonUp(0))
         {
+            // Stop automatic attack when button is released
             isFiring = false; // Reset firing state
             animator.SetBool(animationTrigger, false);
         }
@@ -374,24 +379,15 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
     {
         int maxBullets = GetMaxBulletsForGun(gunType);
         if (bulletsClip[gunType] >= maxBullets) return;
-        if (bulletsBag[gunType] > 0)
-        {
-            PlaySound(reloadAudio);
-            isReloading = true;
-            isFiring = false;
-            Invoke("RecoverAttackState", 2.667f);
-            animator.SetTrigger("Reload");
 
-            int bulletsNeeded = maxBullets - bulletsClip[gunType];
-            int bulletsToReload = Mathf.Min(bulletsBag[gunType], bulletsNeeded);
+        PlaySound(reloadAudio);
+        isReloading = true;
+        isFiring = false;
+        Invoke("RecoverAttackState", 2.667f);
+        animator.SetTrigger("Reload");
 
-            bulletsClip[gunType] += bulletsToReload;
-            bulletsBag[gunType] -= bulletsToReload;
-            ammoBagText.text = "X" + bulletsBag[gunType].ToString();
-            bulletText.text = "X" + bulletsClip[gunType].ToString();
-        }
-
-        animator.SetBool("AutoAttack", false);
+        bulletsClip[gunType] = maxBullets;
+        UpdateBulletText();
     }
 
     // Helper function to get the maximum bullets for the current gun type
@@ -429,6 +425,63 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
             scope.SetActive(false);
             scopeUIGo.SetActive(false);
         }
+    }
+
+    /// <summary>
+    /// Check if player falls off the map
+    /// </summary>
+    private void CheckFallOffMap()
+    {
+        if (transform.position.y < -10 && !isFallingOff) // Adjust this value as needed for your map
+        {
+            StartCoroutine(FallOffRoutine());
+        }
+    }
+
+    /// <summary>
+    /// Handles the fall-off routine, including sound, screen effect, health reduction, and respawn
+    /// </summary>
+    private IEnumerator FallOffRoutine()
+    {
+        isFallingOff = true;
+
+        // Play fall-off sound
+        PlaySound(fallOffAudio);
+
+        // Show red screen effect
+        fallOffScreenEffect.SetActive(true);
+
+        // Reduce player health
+        HP -= 50;
+        if (HP <= 0)
+        {
+            HP = 0;
+            gameOverPanel.SetActive(true);
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        playerHPText.text = HP.ToString();
+
+        // Wait for a moment to show the effect
+        yield return new WaitForSeconds(1f);
+
+        // Hide screen effect
+        fallOffScreenEffect.SetActive(false);
+
+        // Respawn the player
+        Respawn();
+
+        isFallingOff = false;
+    }
+
+    /// <summary>
+    /// Respawn the player to a safe position
+    /// </summary>
+    private void Respawn()
+    {
+        // Set the player position to a predefined spawn point or safe location
+        transform.position = new Vector3(0, 10, 0); // Example spawn point, adjust as needed
+        rigid.velocity = Vector3.zero; // Reset velocity to avoid unexpected movement
     }
 
     /// <summary>
