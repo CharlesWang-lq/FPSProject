@@ -3,9 +3,9 @@ using TMPro;
 
 public class DamagePopup : MonoBehaviour
 {
-    public float moveSpeed = 50f; // Speed of upward movement
-    public float fadeSpeed = 5f; // Speed of fading
-    public float lifetime = 1f; // How long the popup stays visible
+    public float moveSpeed = 0.3f;  // Speed at which the text moves upwards
+    public float fadeSpeed = 5f;   // Speed at which the text fades out
+    public float lifetime = 1f;    // How long the popup stays visible before fading completely
 
     private RectTransform rectTransform;
     private TextMeshProUGUI damageText;
@@ -14,6 +14,7 @@ public class DamagePopup : MonoBehaviour
 
     private void Awake()
     {
+        // Cache the components
         rectTransform = GetComponent<RectTransform>();
         damageText = GetComponent<TextMeshProUGUI>();
         textColor = damageText.color;
@@ -21,28 +22,33 @@ public class DamagePopup : MonoBehaviour
 
     public void Setup(int damage)
     {
-        damageText.text = $"*{damage}"; // Display the damage value with a star
+        // Set the damage text and ensure it starts fully opaque
+        damageText.text = $"*{damage}";
+        textColor.a = 1f;  // Start with full opacity
+        damageText.color = textColor;
     }
 
     private void Update()
     {
-        // Move the text upward
-        Vector3 oldPosition = rectTransform.localPosition; // Log old position
-        rectTransform.localPosition += Vector3.up * moveSpeed * Time.deltaTime;
-        Debug.Log($"Moving DamagePopup: Old Position: {oldPosition}, New Position: {rectTransform.localPosition}");
+        rectTransform.localPosition += Vector3.up;
 
-        // Fade out the text
-        timer += Time.deltaTime;
+        timer += 0.01f;
+
         if (timer > lifetime)
         {
-            textColor.a -= fadeSpeed * Time.deltaTime;
-            damageText.color = textColor;
-
-            if (textColor.a <= 0f)
-            {
-                Debug.Log("Destroying DamagePopup");
-                Destroy(gameObject);
-            }
+            FadeOut();
         }
+
+        if (textColor.a <= 0f)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    // Fade out the text by reducing its alpha value
+    private void FadeOut()
+    {
+        textColor.a -= fadeSpeed; // Reduce alpha over time
+        damageText.color = textColor;
     }
 }

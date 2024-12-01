@@ -338,30 +338,23 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
         attackTimer = Time.time;
         if (Physics.Raycast(gunPointTrans.position, gunPointTrans.forward, out hit, 5))
         {
-            // Generate effects based on the hit object
             switch (hit.collider.tag)
             {
                 case "Enemy":
-                // Apply damage to enemy
                 Enemy enemy = hit.transform.GetComponent<Enemy>();
                 int damageDealt = gunWeaponDamage[gunType];
                 enemy.TakeDamage(damageDealt);
 
-                // Spawn blood effect at the hit point
                 Instantiate(bloodEffectGo, hit.point, Quaternion.identity);
 
-                // Add vertical offset to the hit point
                 Vector3 worldPositionAbove = hit.point + Vector3.up ; // Adjust offset as needed
 
-                // Convert world position to screen position
                 Vector3 screenPosition = Camera.main.WorldToScreenPoint(worldPositionAbove)*1.1f;
 
-                // Instantiate the damage popup as a child of the Canvas
                 GameObject damagePopup = Instantiate(damageTextPrefab, FindObjectOfType<Canvas>().transform);
                 RectTransform rectTransform = damagePopup.GetComponent<RectTransform>();
                 rectTransform.position = screenPosition; // Set initial position in screen space
 
-                // Pass the damage value to the popup
                 damagePopup.GetComponent<DamagePopup>().Setup(damageDealt);
                     break;
                 case "Flowers":
