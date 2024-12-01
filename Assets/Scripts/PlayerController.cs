@@ -59,6 +59,8 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
     public AudioClip jumpAudio;
     public AudioClip fallOffAudio;
     public AudioSource moveAudioSource;
+    public AudioClip emptyGunAudio; // Sound effect when gun is empty
+
 
     public Text playerHPText;
 
@@ -253,6 +255,7 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
     /// <summary>
     /// Single-shot gun attack
     /// </summary>
+    
     private void HandleAttack(AudioClip shootAudio, GameObject attackEffectPrefab, string animationTrigger, bool isAuto = false)
     {
         if ((isAuto ? Input.GetMouseButton(0) : Input.GetMouseButtonDown(0)) && Time.time - attackTimer >= attackCD)
@@ -264,22 +267,26 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
                 PlaySound(shootAudio);
                 bulletsClip[gunType]--;
                 UpdateAmmoUI();
-                
+
                 if (isAuto)
                     animator.SetBool(animationTrigger, true);
                 else
                     animator.SetTrigger(animationTrigger);
 
                 CreateAttackEffect(attackEffectPrefab);
-                
+
                 if (!isAuto)
                     Invoke("GunAttack", GetInvokeDelay());
                 else
                     GunAttack();
             }
-            else // If the clip is empty, reload bullets
+            else if (bulletsClip[gunType] <= 0 && bulletsBag[gunType] > 0) // If no bullets in the clip, but there is ammo in the bag
             {
-                Reload();
+                Reload(); // Attempt to reload
+            }
+            else if (bulletsClip[gunType] == 0 && bulletsBag[gunType] == 0) // No bullets in clip and no ammo in the bag
+            {
+                PlaySound(emptyGunAudio); // Play empty gun sound
             }
         }
         else if (isAuto && Input.GetMouseButtonUp(0))
