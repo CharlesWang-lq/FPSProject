@@ -2,20 +2,20 @@ using UnityEngine;
 
 public class AmmoPack : MonoBehaviour
 {
-    public int ammoAmountPerGun = 999; // Amount of ammo added to each gun type
-    public GameObject interactionPrompt; // UI prompt
+    public int ammoAmountPerGun = 30; // Amount of ammo added to each gun type
+    public GameObject interactionPrompt; // Reference to the UI prompt
 
     private bool isPlayerNearby = false;
 
     private void Update()
     {
-        if (isPlayerNearby && Input.GetKeyDown(KeyCode.E)) // Player presses 'E'
+        if (isPlayerNearby && Input.GetKeyDown(KeyCode.E)) // Player presses 'E' to interact
         {
             PlayerController player = FindObjectOfType<PlayerController>();
             if (player != null)
             {
-                player.RefillAmmo(ammoAmountPerGun); // Refill ammo
-                //Destroy(transform.parent.gameObject); // Destroy the entire ammo pack
+                player.RefillAmmo(ammoAmountPerGun); // Refill the player's ammo
+                Destroy(gameObject); // Destroy the ammo pack after use
             }
         }
     }
@@ -26,7 +26,9 @@ public class AmmoPack : MonoBehaviour
         {
             isPlayerNearby = true;
             if (interactionPrompt != null)
+            {
                 interactionPrompt.SetActive(true); // Show prompt
+            }
         }
     }
 
@@ -36,7 +38,9 @@ public class AmmoPack : MonoBehaviour
         {
             isPlayerNearby = false;
             if (interactionPrompt != null)
+            {
                 interactionPrompt.SetActive(false); // Hide prompt
+            }
         }
     }
 }

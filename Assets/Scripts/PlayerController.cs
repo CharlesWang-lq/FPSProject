@@ -247,9 +247,7 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
         }
         gunGo[gunLevel].SetActive(true);
         gunUIGos[gunLevel].SetActive(true);
-        bulletText.text = "X" + bulletsClip[gunType].ToString();
-        ammoBagText.text = "X" + bulletsBag[gunType].ToString();
-       
+        UpdateAmmoUI();
     }
 
     /// <summary>
@@ -265,7 +263,7 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
             {
                 PlaySound(shootAudio);
                 bulletsClip[gunType]--;
-                UpdateBulletText();
+                UpdateAmmoUI();
                 
                 if (isAuto)
                     animator.SetBool(animationTrigger, true);
@@ -298,10 +296,10 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
         go.transform.localPosition = Vector3.zero;
         go.transform.localEulerAngles = Vector3.zero;
     }
-
-    private void UpdateBulletText()
+    private void UpdateAmmoUI()
     {
         bulletText.text = "X" + bulletsClip[gunType].ToString();
+        ammoBagText.text = "X" + bulletsBag[gunType].ToString();
     }
 
     private float GetInvokeDelay()
@@ -407,8 +405,7 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
 
             bulletsClip[gunType] += bulletsToReload;
             bulletsBag[gunType] -= bulletsToReload;
-            ammoBagText.text = "X" + bulletsBag[gunType].ToString();
-            bulletText.text = "X" + bulletsClip[gunType].ToString();
+            UpdateAmmoUI();
         }
 
         animator.SetBool("AutoAttack", false);
@@ -426,14 +423,14 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
         };
     }
 
-    public void RefillAmmo(int ammoAmount)
+   public void RefillAmmo(int ammoAmount)
     {
         // Create a list of keys to iterate over
         List<GUNTYPE> gunTypes = new List<GUNTYPE>(bulletsBag.Keys);
 
         foreach (GUNTYPE gun in gunTypes)
         {
-            // Define max ammo for each gun type
+            // Define max ammo for each gun type (ammo bag)
             int maxAmmoForGun = gun switch
             {
                 GUNTYPE.SINGLESHOT => 30,
@@ -442,25 +439,28 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
                 _ => 0
             };
 
-            // Add ammo to the bag but ensure it doesn't exceed the max
-            bulletsBag[gun] = Mathf.Min(bulletsBag[gun] + ammoAmount, maxAmmoForGun);
+            // Define max clip size for each gun type
+            int maxClipForGun = gun switch
+            {
+                GUNTYPE.SINGLESHOT => 10,
+                GUNTYPE.AUTO => 30,
+                GUNTYPE.SNIPING => 1,
+                _ => 0
+            };
 
             // Refill the clip if it's not already full
-            int maxBullets = GetMaxBulletsForGun(gun);
-            if (bulletsClip[gun] < maxBullets)
+            if (bulletsClip[gun] < maxClipForGun)
             {
-                int bulletsNeeded = maxBullets - bulletsClip[gun];
-                int bulletsToReload = Mathf.Min(bulletsBag[gun], bulletsNeeded);
+                int bulletsNeeded = maxClipForGun - bulletsClip[gun]; // How many bullets are needed to fill the clip
+                int bulletsToReload = Mathf.Min(bulletsBag[gun], bulletsNeeded); // Take only what's available in the bag
                 bulletsClip[gun] += bulletsToReload;
-                bulletsBag[gun] -= bulletsToReload;
             }
+
+            // Add ammo to the bag but ensure it doesn't exceed the max
+            bulletsBag[gun] = Mathf.Min(bulletsBag[gun] + ammoAmount, maxAmmoForGun);
         }
 
-        // Update UI
-        bulletText.text = "X" + bulletsClip[gunType];
-        ammoBagText.text = "X" + bulletsBag[gunType];
-
-        Debug.Log("Ammo refilled!");
+        UpdateAmmoUI();
     }
 
     /// <summary>
