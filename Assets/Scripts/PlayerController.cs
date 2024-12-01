@@ -426,6 +426,43 @@ public class PlayerController : MonoBehaviour //ai help generator some of the co
         };
     }
 
+    public void RefillAmmo(int ammoAmount)
+    {
+        // Create a list of keys to iterate over
+        List<GUNTYPE> gunTypes = new List<GUNTYPE>(bulletsBag.Keys);
+
+        foreach (GUNTYPE gun in gunTypes)
+        {
+            // Define max ammo for each gun type
+            int maxAmmoForGun = gun switch
+            {
+                GUNTYPE.SINGLESHOT => 30,
+                GUNTYPE.AUTO => 50,
+                GUNTYPE.SNIPING => 5,
+                _ => 0
+            };
+
+            // Add ammo to the bag but ensure it doesn't exceed the max
+            bulletsBag[gun] = Mathf.Min(bulletsBag[gun] + ammoAmount, maxAmmoForGun);
+
+            // Refill the clip if it's not already full
+            int maxBullets = GetMaxBulletsForGun(gun);
+            if (bulletsClip[gun] < maxBullets)
+            {
+                int bulletsNeeded = maxBullets - bulletsClip[gun];
+                int bulletsToReload = Mathf.Min(bulletsBag[gun], bulletsNeeded);
+                bulletsClip[gun] += bulletsToReload;
+                bulletsBag[gun] -= bulletsToReload;
+            }
+        }
+
+        // Update UI
+        bulletText.text = "X" + bulletsClip[gunType];
+        ammoBagText.text = "X" + bulletsBag[gunType];
+
+        Debug.Log("Ammo refilled!");
+    }
+
     /// <summary>
     /// Finished reloading, ready to attack
     /// </summary>

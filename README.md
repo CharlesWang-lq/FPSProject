@@ -53,7 +53,7 @@ scope for sniper, rfile and machinegun✅
 
 UI for how much ammo you have left (not just the ammo in your magazine, but the whole gun)✅
 
-damage text popup for zombie✅
+damage text popup and fadeout and moveup for zombie✅
 
 there are serval already knew bug exist in the game
 bug such as when player reach the edge or conner of the playground, there is a possiblity to fall off, 
