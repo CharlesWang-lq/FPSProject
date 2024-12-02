@@ -55,5 +55,8 @@ UI for how much ammo you have left (not just the ammo in your magazine, but the 
 
 damage text popup and fadeout and moveup for zombie✅
 
-there are serval already knew bug exist in the game
-bug such as when player reach the edge or conner of the playground, there is a possiblity to fall off, 
+a mechanic for a refill on ammo✅
+
+another different type of zombie(morepowerfull, more hp, and higher speed and accerlation rate)✅
+
+collecting a key to unlock a door to get to more enemies✅

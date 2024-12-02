@@ -39300,6 +39300,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9152487318916878323, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+      propertyPath: m_Avatar
+      value: 
+      objectReference: {fileID: 9000000, guid: b19b172a6e956d34cb003b7befa2af53, type: 3}
+    - target: {fileID: 9152487318916878323, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 377e2a5475212584f8f97b8f9639dd3d, type: 2}
@@ -39440,15 +39444,15 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 1
-  m_Acceleration: 8
+  m_Speed: 1.5
+  m_Acceleration: 12
   avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 2
+  m_Height: 3
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
@@ -49717,63 +49721,63 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2499452444250165043, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
-      propertyPath: m_Name
-      value: Wraith (6)
-      objectReference: {fileID: 0}
-    - target: {fileID: 2499452444250165043, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
-      propertyPath: m_TagString
-      value: Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 3018544719663928713, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+    - target: {fileID: 2317857594566744645, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
       propertyPath: m_RootOrder
       value: 11
       objectReference: {fileID: 0}
-    - target: {fileID: 3018544719663928713, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+    - target: {fileID: 2317857594566744645, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.67
       objectReference: {fileID: 0}
-    - target: {fileID: 3018544719663928713, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+    - target: {fileID: 2317857594566744645, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.521
       objectReference: {fileID: 0}
-    - target: {fileID: 3018544719663928713, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+    - target: {fileID: 2317857594566744645, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
       propertyPath: m_LocalPosition.z
       value: 3.65
       objectReference: {fileID: 0}
-    - target: {fileID: 3018544719663928713, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+    - target: {fileID: 2317857594566744645, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.6384371
       objectReference: {fileID: 0}
-    - target: {fileID: 3018544719663928713, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+    - target: {fileID: 2317857594566744645, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
       propertyPath: m_LocalRotation.x
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: 3018544719663928713, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+    - target: {fileID: 2317857594566744645, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
       propertyPath: m_LocalRotation.y
       value: 0.76967406
       objectReference: {fileID: 0}
-    - target: {fileID: 3018544719663928713, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+    - target: {fileID: 2317857594566744645, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
       propertyPath: m_LocalRotation.z
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: 3018544719663928713, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+    - target: {fileID: 2317857594566744645, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3018544719663928713, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+    - target: {fileID: 2317857594566744645, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 100.649
       objectReference: {fileID: 0}
-    - target: {fileID: 3018544719663928713, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+    - target: {fileID: 2317857594566744645, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 9152487318916878323, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+    - target: {fileID: 3125919938299543807, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
+      propertyPath: m_Name
+      value: Wraith_II
+      objectReference: {fileID: 0}
+    - target: {fileID: 3125919938299543807, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 8559799070492344383, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 377e2a5475212584f8f97b8f9639dd3d, type: 2}
-    - target: {fileID: 9152487318916878323, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+    - target: {fileID: 8559799070492344383, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0
       objectReference: {fileID: 0}
@@ -49781,27 +49785,27 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2499452444250165043, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 3125919938299543807, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1494325377}
-    - targetCorrespondingSourceObject: {fileID: 2499452444250165043, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 3125919938299543807, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1494325376}
-    - targetCorrespondingSourceObject: {fileID: 2499452444250165043, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 3125919938299543807, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1494325375}
-    - targetCorrespondingSourceObject: {fileID: 2499452444250165043, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 3125919938299543807, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1494325374}
-  m_SourcePrefab: {fileID: 100100000, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
 --- !u!1 &1494325372 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 2499452444250165043, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+  m_CorrespondingSourceObject: {fileID: 3125919938299543807, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
   m_PrefabInstance: {fileID: 1494325371}
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &1494325373 stripped
 Animator:
-  m_CorrespondingSourceObject: {fileID: 9152487318916878323, guid: 9257ae217dd1b404c845ae1f178cbfd8, type: 3}
+  m_CorrespondingSourceObject: {fileID: 8559799070492344383, guid: 06b5c058b87339541a56cdd22b4e8670, type: 3}
   m_PrefabInstance: {fileID: 1494325371}
   m_PrefabAsset: {fileID: 0}
 --- !u!82 &1494325374
@@ -49911,7 +49915,7 @@ NavMeshAgent:
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 1
-  m_Acceleration: 8
+  m_Acceleration: 15
   avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 0
@@ -49935,11 +49939,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 1494325373}
-  HP: 20
+  HP: 40
   pc: {fileID: 910226174}
   agent: {fileID: 1494325375}
   attackCD: 2.36
-  attackValue: 5
+  attackValue: 10
   audioSource: {fileID: 1494325374}
   attackAudio: {fileID: 8300000, guid: 4fb45f9472f5e554c82a5a9c7ba4c739, type: 3}
   dieAudio: {fileID: 8300000, guid: d108e9ae3908d4d479e1e41cca0188a3, type: 3}
